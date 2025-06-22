@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tab Sports</title>
+  <style>
+    * {margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
+    body {background:#f5f5f5;overflow-x:hidden;padding-top:70px;padding-bottom:70px;}
+    header {
+      position:fixed;top:0;width:100%;height:70px;background:#fff;
+      display:flex;align-items:center;padding:0 20px;
+      box-shadow:0 2px 5px rgba(0,0,0,0.1);z-index:1000;
+    }
+    .logo-box {
+      width:40px;height:40px;background:#000;color:#fff;
+      border-radius:8px;display:flex;align-items:center;justify-content:center;
+      font-size:16px;font-weight:bold;
+    }
+    .brand-text {margin-left:10px;}
+    .brand-text h1 {font-size:18px;color:#333;}
+    .brand-text p {font-size:11px;color:gray;line-height:14px;}
+
+    #searchPage {
+      display:none;position:fixed;top:70px;bottom:70px;width:100%;
+      background:#fff;z-index:998;padding:10px;overflow:auto;
+    }
+    #searchPage input {
+      width:100%;padding:8px 10px;border:1px solid #ccc;border-radius:8px;
+    }
+
+    #drawer {
+      position:fixed;top:0;right:-260px;width:260px;height:100%;
+      background:#fff;box-shadow:-2px 0 5px rgba(0,0,0,0.2);
+      transition:right .3s;z-index:1002;padding:20px;
+      overflow-y:auto;scrollbar-width:none;
+    }
+    #drawer::-webkit-scrollbar {display:none;}
+    .drawer-header {
+      display:flex;align-items:center;margin-bottom:20px;gap:10px;
+    }
+    .user-initial {
+      width:40px;height:40px;background:#000;color:#fff;
+      border-radius:50%;display:flex;align-items:center;justify-content:center;
+      font-size:16px;font-weight:bold;
+    }
+    .drawer-btn {
+      padding:10px 5px;font-size:14px;color:#333;cursor:pointer;
+      display:flex;align-items:center;border-radius:8px;
+    }
+    .drawer-btn:hover {background-color:#f0f0f0;}
+    #drawer hr {
+      margin:12px 0;border:none;border-top:1px solid #ddd;
+    }
+
+    nav {
+      position:fixed;bottom:0;width:100%;height:70px;background:#000;
+      display:flex;justify-content:space-around;align-items:center;
+      z-index:1000;
+    }
+    nav i {
+      color:#fff;font-size:22px;cursor:pointer;
+    }
+
+    .content {
+      padding:20px;height:calc(100vh - 140px);overflow:auto;
+    }
+    .banner {
+      background:#000;color:#fff;padding:20px;
+      border-radius:15px;margin-bottom:20px;
+    }
+    .banner h2 {font-size:18px;margin-bottom:10px;}
+    .banner button {
+      background:#fff;padding:8px 16px;border-radius:20px;
+      border:none;cursor:pointer;
+    }
+    .categories {
+      display:flex;gap:10px;overflow-x:auto;overflow-y:hidden;
+      padding-bottom:5px;margin-bottom:20px;scrollbar-width:none;
+    }
+    .categories::-webkit-scrollbar {display:none;}
+    .categories span {
+      flex-shrink:0;padding:8px 15px;border-radius:20px;
+      background:#eee;cursor:pointer;
+    }
+    .categories .active {background:#000;color:#fff;}
+
+    .product-grid {
+      display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
+      gap:15px;overflow:auto;height:100%;scrollbar-width:none;padding-bottom:20px;
+    }
+    .product-grid::-webkit-scrollbar {display:none;}
+    .product-card {
+      background:#d0e8f2;padding:15px;border-radius:15px;
+      text-align:center;position:relative;
+    }
+    .product-card img {
+      width:100px;margin-bottom:10px;
+    }
+    .add-btn {
+      position:absolute;right:10px;bottom:10px;background:#fff;
+      width:30px;height:30px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-size:20px;cursor:pointer;
+    }
+  </style>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<header>
+  <div class="logo-box">Tab</div>
+  <div class="brand-text">
+    <h1>Tab Sports</h1>
+    <p>Selling Nike, Adidas, Puma<br>Also apparel & bottles</p>
+  </div>
+</header>
+
+<div id="searchPage">
+  <input type="text" id="searchInput" placeholder="Search products or brands...">
+  <div id="searchResults" class="product-grid"></div>
+</div>
+
+<div class="content">
+  <div class="banner">
+    <h2>New Release<br>Nike Air Max Plus</h2>
+    <button>Shop now</button>
+  </div>
+  <div class="categories" id="categories">
+    <span data-cat="all" class="active">Popular</span>
+    <span data-cat="Nike">Shoes</span>
+    <span data-cat="Adidas">Apparel</span>
+    <span data-cat="Puma">Accessories</span>
+    <span data-cat="Bottles">Bottles</span>
+  </div>
+  <div class="product-grid" id="productGrid"></div>
+</div>
+
+<div id="drawer">
+  <div class="drawer-header">
+    <div class="user-initial" id="userInitial">A</div>
+    <div><strong id="userName">Alex Doe</strong></div>
+  </div>
+  <hr>
+  <div class="drawer-btn"><i class="fas fa-box-open"></i>&nbsp; Products</div>
+  <div class="drawer-btn"><i class="fas fa-shopping-cart"></i>&nbsp; Cart</div>
+  <div class="drawer-btn"><i class="fas fa-cog"></i>&nbsp; Settings</div>
+  <div class="drawer-btn"><i class="fas fa-chart-line"></i>&nbsp; Stock</div>
+  <div class="drawer-btn"><i class="fas fa-file-invoice"></i>&nbsp; Bill Record</div>
+  <hr>
+  <div class="drawer-btn"><i class="fas fa-sign-out-alt"></i>&nbsp; Logout</div>
+</div>
+
+<nav>
+  <i class="fas fa-home" id="homeIcon"></i>
+  <i class="fas fa-search" id="searchIcon"></i>
+  <i class="fas fa-th-large" id="productIcon"></i>
+  <i class="fas fa-shopping-bag"></i>
+  <i class="fas fa-user-circle" id="personIcon"></i>
+</nav>
+
+<script>
+  const drawer = document.getElementById('drawer');
+  const person = document.getElementById('personIcon');
+  person.onclick = ()=> drawer.style.right = '0';
+  document.body.onclick = e=>{
+    if(e.target === drawer || e.target === person || drawer.contains(e.target)) return;
+    drawer.style.right='-260px';
+  };
+
+  const cats = document.querySelectorAll('#categories span');
+  cats.forEach(c=>{
+    c.onclick = ()=>{
+      cats.forEach(x=>x.classList.remove('active'));
+      c.classList.add('active');
+      filterItems(c.dataset.cat);
+    };
+  });
+
+  function filterItems(cat){
+    document.querySelectorAll('.product-card').forEach(card=>{
+      card.style.display = (cat==='all' || card.dataset.brand===cat) ? 'block':'none';
+    });
+  }
+
+  document.getElementById('searchIcon').onclick = ()=>{
+    document.getElementById('searchPage').style.display='block';
+  };
+  document.getElementById('homeIcon').onclick = ()=>{
+    document.getElementById('searchPage').style.display='none';
+    cats[0].click();
+  };
+  document.getElementById('searchInput').oninput = function(){
+    const q = this.value.toLowerCase();
+    const results = document.getElementById('searchResults');
+    results.innerHTML = '';
+    document.querySelectorAll('.product-card').forEach(card=>{
+      if(card.dataset.name.toLowerCase().includes(q) || card.dataset.brand.toLowerCase().includes(q)){
+        results.appendChild(card.cloneNode(true));
+      }
+    });
+  };
+
+  // Product icon loads products
+  document.getElementById('productIcon').onclick = ()=>{
+    const grid = document.getElementById('productGrid');
+    grid.innerHTML = '';
+    const products = [
+      { name: 'Nike ZoomX', brand: 'Nike', img: 'https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/7c9d6ed7-a088-4b06-b4b7-fd9b63a6f7fc/zoomx-vaporfly-next-2-road-racing-shoes-FtfpHg.png', price: '$180' },
+      { name: 'Adidas Jacket', brand: 'Adidas', img: 'https://assets.adidas.com/images/w_600,f_auto,q_auto/66d7ac72282340f9a0f7aec400d07b26_9366/Essentials_BrandLove_Tee_Black_IC9304_01_laydown.jpg', price: '$60' },
+      { name: 'Puma Shoes', brand: 'Puma', img: 'https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa/global/376676/11/sv01/fnd/IND/fmt/png/Flyer-Runner-Unisex-Running-Shoes', price: '$75' },
+      { name: 'Nike Bag', brand: 'Nike', img: 'https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/e18d8b6a-b2e2-4b6d-aeb2-7a9bb78a9f93/brasilia-9-5-training-backpack-24l-2pTqRg.png', price: '$45' },
+    ];
+    products.forEach(p => {
+      const div = document.createElement('div');
+      div.className = 'product-card';
+      div.dataset.name = p.name;
+      div.dataset.brand = p.brand;
+      div.innerHTML = `<img src="${p.img}" alt=""><h3>${p.name}</h3><span>${p.price}</span><div class="add-btn">+</div>`;
+      grid.appendChild(div);
+    });
+  }
+</script>
+</body>
+</html>
